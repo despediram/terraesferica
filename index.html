@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dossiê Definitivo: A Realidade Esférica — Provas Científicas</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  /* =========================================
+     VARIÁVEIS DE COR E ESTILO BASE
+     Edite as cores aqui para mudar o tema
+  ========================================= */
+  :root{
+    --bg: #07080c;
+    --ink: #eef1f7;
+    --ink-dim: #9aa3b2;
+    --line: rgba(255,255,255,.08);
+    --line-strong: rgba(255,255,255,.16);
+    --cyan: #6ee7ff;
+    --magenta: #ff7ad9;
+    --lime: #c8ff5e;
+    --amber: #ffb05c;
+    --danger: #ff5566;
+  }
+
+  *{ -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+  html, body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+  }
+  
+  /* Fontes auxiliares */
+  .serif{ font-family: 'Instrument Serif', serif; font-weight: 400; letter-spacing: -0.01em; }
+  .mono{ font-family: 'JetBrains Mono', monospace; }
+  .ital{ font-style: italic; }
+
+  /* =========================================
+     EFEITOS VISUAIS E FUNDOS
+  ========================================= */
+  .mesh{
+    background:
+      radial-gradient(900px 600px at 12% -10%, rgba(110,231,255,.10), transparent 60%),
+      radial-gradient(800px 500px at 95% 8%, rgba(255,122,217,.10), transparent 60%),
+      radial-gradient(700px 600px at 50% 110%, rgba(200,255,94,.06), transparent 60%),
+      var(--bg);
+  }
+  
+  .grain{
+    position: fixed; inset: 0; pointer-events:none; z-index:1; opacity:.05; mix-blend-mode:overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+
+  .hairlines{
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,.04) 1px, transparent 1px);
+    background-size: 88px 88px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+  }
+
+  /* =========================================
+     CARDS (CAIXAS DE CONTEÚDO)
+  ========================================= */
+  .glass{
+    background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.012));
+    border: 1px solid var(--line);
+    backdrop-filter: blur(8px);
+    transition: border-color .3s ease, transform .35s cubic-bezier(.2,.7,.2,1);
+  }
+  .glass:hover{ border-color: var(--line-strong); transform: translateY(-4px); }
+
+  /* Bordas coloridas laterais nos cards */
+  .edge-cyan::before, .edge-magenta::before, .edge-lime::before, .edge-amber::before{
+    content:""; position:absolute; left:0; top:24px; bottom:24px; width:2px; border-radius:2px;
+  }
+  .edge-cyan::before{ background: linear-gradient(to bottom, transparent, var(--cyan), transparent); box-shadow: 0 0 18px rgba(110,231,255,.5); }
+  .edge-magenta::before{ background: linear-gradient(to bottom, transparent, var(--magenta), transparent); box-shadow: 0 0 18px rgba(255,122,217,.5); }
+  .edge-lime::before{ background: linear-gradient(to bottom, transparent, var(--lime), transparent); box-shadow: 0 0 18px rgba(200,255,94,.45); }
+  .edge-amber::before{ background: linear-gradient(to bottom, transparent, var(--amber), transparent); box-shadow: 0 0 18px rgba(255,176,92,.5); }
+
+  /* =========================================
+     COMPONENTES (Chips, Imagens, Tabelas)
+  ========================================= */
+  .chip{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:.22em;
+    text-transform:uppercase; padding: 4px 10px; border-radius: 999px; border: 1px solid currentColor;
+  }
+  .dot{ width:5px; height:5px; border-radius:999px; background: currentColor; box-shadow:0 0 8px currentColor; }
+
+  .falacia{
+    border-top: 1px dashed rgba(255,85,102,.35);
+    border-bottom: 1px dashed rgba(255,85,102,.35);
+  }
+
+  .data-stat {
+    display: flex; flex-direction: column; gap: 4px; padding: 14px 16px;
+    border: 1px solid var(--line); border-radius: 10px; background: rgba(255,255,255,0.02);
+  }
+
+  .frame{
+    position:relative; overflow:hidden; border-radius: 14px; border: 1px solid var(--line); background: #000;
+  }
+  .frame img{ width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s ease; }
+  .glass:hover .frame img{ transform: scale(1.04); }
+  .frame::after{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background: linear-gradient(180deg, transparent 60%, rgba(0,0,0,.45));
+  }
+  .frame .badge{
+    position:absolute; left:10px; top:10px; z-index:2;
+    font-family:'JetBrains Mono', monospace; font-size:9px; letter-spacing:.2em;
+    background: rgba(0,0,0,.55); border:1px solid rgba(255,255,255,.18);
+    padding: 4px 8px; border-radius: 6px; color: #fff;
+  }
+
+  /* =========================================
+     TIPOGRAFIA E LAYOUT ESPECIAL
+  ========================================= */
+  .section-num{
+    font-family: 'Instrument Serif', serif; font-size: clamp(120px, 22vw, 280px);
+    line-height: .8; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,.08); user-select:none;
+  }
+
+  .ticker{ border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); overflow:hidden; white-space:nowrap; }
+  .ticker-track{
+    display:inline-block; padding: 14px 0; animation: scroll 60s linear infinite;
+    font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.3em; color: var(--ink-dim);
+  }
+  @keyframes scroll{ from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+  .pulse{
+    width:8px; height:8px; border-radius:999px; background: var(--cyan); box-shadow: 0 0 0 0 rgba(110,231,255,.6);
+    animation: pulse 2.4s ease-out infinite;
+  }
+  @keyframes pulse{ 0%{ box-shadow:0 0 0 0 rgba(110,231,255,.5); } 100%{ box-shadow:0 0 0 18px rgba(110,231,255,0); } }
+
+  .display{ font-family:'Instrument Serif', serif; letter-spacing: -0.035em; line-height: 0.92; }
+  .gradient-text{
+    background: linear-gradient(180deg, #ffffff 0%, #c2cad9 70%, #6ee7ff 130%);
+    -webkit-background-clip: text; background-clip:text; color: transparent;
+  }
+
+  .band{ display:flex; align-items:center; gap:18px; font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:.3em; text-transform:uppercase; color: var(--ink-dim); }
+  .band .line{ flex:1; height:1px; background: var(--line); }
+
+  .ticks{ position:absolute; inset:0; pointer-events:none; }
+  .ticks span{ position:absolute; width:10px; height:10px; border:1px solid rgba(255,255,255,.15); }
+  .ticks .tl{ top:-1px; left:-1px; border-right:none; border-bottom:none; }
+  .ticks .tr{ top:-1px; right:-1px; border-left:none; border-bottom:none; }
+  .ticks .bl{ bottom:-1px; left:-1px; border-right:none; border-top:none; }
+  .ticks .br{ bottom:-1px; right:-1px; border-left:none; border-top:none; }
+</style>
+</head>
+<body class="mesh">
+<div class="grain"></div>
+
+<!-- BARRA SUPERIOR -->
+<div class="relative z-10 border-b border-white/5">
+  <div class="max-w-[1400px] mx-auto px-6 md:px-10 py-3 flex items-center justify-between mono text-[11px] tracking-[0.2em] uppercase text-white/50">
+    <div class="flex items-center gap-4"><span class="pulse"></span><span>Index 00 — Dossier</span></div>
+    <div class="hidden md:flex items-center gap-6"><span>Lat. −23.55°</span><span>Lon. −46.63°</span><span>R = 6 371 km</span></div>
+    <div>2026 / Edição 02 — Expandida</div>
+  </div>
+</div>
+
+<!-- CABEÇALHO HERO -->
+<header class="relative overflow-hidden z-10">
+  <div class="absolute inset-0 hairlines"></div>
+  <div class="max-w-[1400px] mx-auto px-6 md:px-10 pt-20 md:pt-28 pb-20 md:pb-32 relative">
+    <div class="grid md:grid-cols-12 gap-10 items-end">
+      <div class="md:col-span-8">
+        <div class="band mb-8">
+          <span>◍ Manifesto Científico</span><span class="line"></span><span>Vol. I — Edição expandida</span>
+        </div>
+        <h1 class="display text-[14vw] md:text-[9.5vw] gradient-text">A Realidade<br><span class="ital">Esférica.</span></h1>
+        <p class="mt-10 max-w-3xl text-lg md:text-xl text-white/70 leading-relaxed">
+          Um dossiê demolidor contra o terraplanismo — escrito de forma que <span class="serif ital text-white">qualquer pessoa</span> possa entender. Não é um debate de opiniões: é um <span class="text-cyan-300">inventário forense</span> da física, da óptica, da astronomia e da engenharia que tornam a esfera inegociável.
+        </p>
+      </div>
+
+      <div class="md:col-span-4 md:pl-8 md:border-l border-white/10">
+        <div class="mono text-[11px] tracking-[0.25em] uppercase text-white/40 mb-3">Sumário Executivo</div>
+        <p class="text-white/70 text-sm leading-relaxed">
+          O terraplanismo não é uma teoria — é confusão de conceitos básicos disfarçada de ceticismo. Tudo isso pode ser refutado com <span class="text-pink-300">um pêndulo, uma câmera, um relógio e o céu noturno</span>.
+        </p>
+        <div class="grid grid-cols-3 gap-4 mt-8 pt-6 border-t border-white/10">
+          <div><div class="serif text-3xl">04</div><div class="mono text-[10px] tracking-widest uppercase text-white/40 mt-1">Categorias</div></div>
+          <div><div class="serif text-3xl">16</div><div class="mono text-[10px] tracking-widest uppercase text-white/40 mt-1">Provas</div></div>
+          <div><div class="serif text-3xl">∞</div><div class="mono text-[10px] tracking-widest uppercase text-white/40 mt-1">Réplicas</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Indicadores Flutuantes -->
+    <div class="mt-20 grid grid-cols-2 md:grid-cols-4 gap-6 mono text-[11px] tracking-[0.2em] uppercase text-white/40">
+      <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cyan-300"></span> Física Newtoniana</div>
+      <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-pink-300"></span> Geodésia & Óptica</div>
+      <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-lime-300"></span> Astronomia Empírica</div>
+      <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-amber-300"></span> Engenharia Espacial</div>
+    </div>
+  </div>
+</header>
+
+<!-- DIVISOR ROLANTE -->
+<div class="ticker relative z-10">
+  <div class="ticker-track">
+    A TERRA GIRA · 9.81 m/s² · ERATÓSTENES MEDIU O RAIO EM 240 a.C. · PÊNDULO DE FOUCAULT, 1851 · ECLIPSES SÃO CIRCULARES · GPS CALCULA EM 4 DIMENSÕES · VAN ALLEN É UMA DOSE, NÃO UMA PAREDE · KÁRMÁN @ 100 km · ESCUDOS ABLATIVOS A 2.800 °C · 
+    A TERRA GIRA · 9.81 m/s² · ERATÓSTENES MEDIU O RAIO EM 240 a.C. · PÊNDULO DE FOUCAULT, 1851 · ECLIPSES SÃO CIRCULARES · GPS CALCULA EM 4 DIMENSÕES · VAN ALLEN É UMA DOSE, NÃO UMA PAREDE · KÁRMÁN @ 100 km · ESCUDOS ABLATIVOS A 2.800 °C · 
+  </div>
+</div>
+
+<main class="relative z-10 max-w-[1400px] mx-auto px-6 md:px-10 py-24 md:py-32 space-y-32">
+
+  <!-- ==========================================
+       CATEGORIA 01: FÍSICA
+  =========================================== -->
+  <section>
+    <div class="grid md:grid-cols-12 gap-8 mb-10 items-end">
+      <div class="md:col-span-2"><div class="section-num">01</div></div>
+      <div class="md:col-span-7">
+        <div class="band mb-4 text-cyan-300"><span class="dot bg-cyan-300"></span><span>Categoria 01</span><span class="line"></span></div>
+        <h2 class="display text-5xl md:text-7xl">Física & <span class="ital text-cyan-300">leis da natureza</span></h2>
+      </div>
+      <div class="md:col-span-3 text-white/60 text-sm leading-relaxed border-l border-white/10 pl-6">
+        Onde a confusão entre densidade e força evapora diante de um pêndulo, uma câmara de vácuo e a primeira lei de Newton.
+      </div>
+    </div>
+    
+    <div class="max-w-3xl mb-12 text-white/70 leading-relaxed text-base md:text-lg">
+      A física é o terreno onde o terraplanismo desaba mais rápido. Seus argumentos vêm de mal-entendidos sobre conceitos do ensino médio: gravidade, inércia e por que não sentimos a rotação. Vamos esclarecer com analogias que qualquer pessoa entende.
+    </div>
+
+    <!-- Grid com 2 colunas para telas grandes, 1 para mobile -->
+    <div class="grid md:grid-cols-2 gap-6">
+
+      <!-- Arg 1.1 -->
+      <article class="glass edge-cyan rounded-2xl p-7 pl-9 relative flex flex-col">
+        <div class="ticks"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span></div>
+        <div class="flex items-center justify-between mb-5">
+          <span class="mono text-[10px] tracking-[0.25em] uppercase text-white/40">Argumento 01.1</span>
+          <span class="mono text-[11px] text-cyan-300">⚛</span>
+        </div>
+        <h3 class="serif text-3xl leading-tight mb-5">Densidade <span class="ital text-white/50">vs</span> Gravidade.</h3>
+        <div class="frame aspect-[4/3] mb-5 shrink-0">
+          <span class="badge">APOLLO 15 · 1971</span>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/d/d8/Hammer_n_feather%2C_Apollo_15.gif" alt="Pena e martelo na Lua">
+        </div>
+        <div class="falacia py-3 mb-4 shrink-0">
+          <div class="text-red-400 chip mb-2"><span class="dot"></span> Mito</div>
+          <p class="serif italic text-white/80 text-lg leading-snug">"A gravidade não existe. As coisas caem porque são mais densas que o ar."</p>
+        </div>
+        <div class="flex-grow">
+          <div class="text-cyan-300 chip mb-3"><span class="dot"></span> Realidade</div>
+          <p class="text-[14px] leading-relaxed text-white/80">
+            Densidade é apenas uma razão matemática (massa por volume) — não é força. Em uma câmara de vácuo, sem ar, uma pena e um martelo caem na <strong class="text-white">exata mesma velocidade</strong>. O astronauta David Scott demonstrou isso na Lua.
+          </p>
+          <div class="mt-4 pt-4 border-t border-white/10">
+            <div class="mono text-[10px] tracking-[0.25em] uppercase text-white/40 mb-2">Detalhes técnicos</div>
+            <div class="text-[14px] leading-relaxed text-white/70 space-y-3">
+              <p>Se a densidade empurrasse os objetos, um balão de hélio "cairia para cima". Isso é empuxo, não anti-gravidade. Sem o ar, o balão cai. A gravidade puxa as massas; a densidade só organiza quem flutua no ar ou na água.</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2 mt-5 mb-5">
+            <div class="data-stat"><span class="serif text-xl text-white">9,81 m/s²</span><span class="mono text-[9px] uppercase text-white/40 tracking-[0.2em]">Aceleração g</span></div>
+            <div class="data-stat"><span class="serif text-xl text-white">0 atm</span><span class="mono text-[9px] uppercase text-white/40 tracking-[0.2em]">Vácuo</span></div>
+          </div>
+          <div class="pt-4 border-t border-white/10">
+            <div class="chip text-cyan-300 mb-2"><span class="dot"></span> Como verificar</div>
+            <p class="text-[14px] text-white/70">Procure "BBC vacuum chamber feather" no YouTube. Brian Cox solta penas e bolas de boliche no vácuo e elas caem juntas.</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- Arg 1.2 -->
+      <article class="glass edge-cyan rounded-2xl p-7 pl-9 relative flex flex-col">
+        <div class="ticks"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span></div>
+        <div class="flex items-center justify-between mb-5">
+          <span class="mono text-[10px] tracking-[0.25em] uppercase text-white/40">Argumento 01.2</span>
+          <span class="mono text-[11px] text-cyan-300">→</span>
+        </div>
+        <h3 class="serif text-3xl leading-tight mb-5">Inércia & o <span class="ital">trem-bala</span>.</h3>
+        <div class="frame aspect-[4/3] mb-5 shrink-0">
+          <span class="badge">SHINKANSEN · 320 km/h</span>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/f/ff/Shinkansen_Bullet_Train.jpg" alt="Trem bala">
+        </div>
+        <div class="falacia py-3 mb-4 shrink-0">
+          <div class="text-red-400 chip mb-2"><span class="dot"></span> Mito</div>
+          <p class="serif italic text-white/80 text-lg leading-snug">"Se a Terra girasse a 1.600 km/h, sentiríamos um vento absurdo."</p>
+        </div>
+        <div class="flex-grow">
+          <div class="text-cyan-300 chip mb-3"><span class="dot"></span> Realidade</div>
+          <p class="text-[14px] leading-relaxed text-white/80">
+            No trem-bala a 320 km/h você joga uma moeda e ela cai <strong class="text-white">na sua mão</strong>. Você, a moeda e o ar do vagão movem-se na mesma velocidade. A Terra faz o mesmo: atmosfera, oceanos e nós giramos juntos.
+          </p>
+          <div class="mt-4 pt-4 border-t border-white/10">
+            <div class="mono text-[10px] tracking-[0.25em] uppercase text-white/40 mb-2">Detalhes técnicos</div>
+            <div class="text-[14px] leading-relaxed text-white/70 space-y-3">
+              <p>Primeira Lei de Newton: sentimos aceleração (mudança), nunca velocidade constante. Por isso você anda normal num avião a 900 km/h. A Terra tem rotação constante há bilhões de anos.</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2 mt-5 mb-5">
+            <div class="data-stat"><span class="serif text-xl text-white">1.670 km/h</span><span class="mono text-[9px] uppercase text-white/40 tracking-[0.2em]">Rotação Equador</span></div>
+            <div class="data-stat"><span class="serif text-xl text-white">0 km/h</span><span class="mono text-[9px] uppercase text-white/40 tracking-[0.2em]">Vento sentido</span></div>
+          </div>
+          <div class="pt-4 border-t border-white/10">
+            <div class="chip text-cyan-300 mb-2"><span class="dot"></span> Como verificar</div>
+            <p class="text-[14px] text-white/70">O teste da moeda em qualquer veículo em velocidade constante. A física inercial se aplica da mesma forma.</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- Arg 1.3 -->
+      <article class="glass edge-cyan rounded-2xl p-7 pl-9 relative flex flex-col">
+        <div class="ticks"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span></div>
+        <div class="flex items-center justify-between mb-5">
+          <span class="mono text-[10px] tracking-[0.25em] uppercase text-white/40">Argumento 01.3</span>
+          <span class="mono text-[11px] text-cyan-300">∿</span>
+        </div>
+        <h3 class="serif text-3xl leading-tight mb-5">Pêndulo de <span class="ital">Foucault</span>.</h3>
+        <div class="frame aspect-[4/3] mb-5 shrink-0">
+          <span class="badge">PANTHÉON · PARIS · 1851</span>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/2/24/Panth%C3%A9on_Pendule_de_Foucault1.JPG" alt="Pêndulo">
+        </div>
+        <div class="falacia py-3 mb-4 shrink-0">
+          <div class="text-red-400 chip mb-2"><span class="dot"></span> Mito</div>
+          <p class="serif italic text-white/80 text-lg leading-snug">"Ninguém jamais mediu a rotação da Terra diretamente."</p>
+        </div>
+        <div class="flex-grow">
+          <div class="text-cyan-300 chip mb-3"><span class="dot"></span> Realidade</div>
+          <p class="text-[14px] leading-relaxed text-white/80">
+            Em 1851, Foucault pendurou um pêndulo livre de 67m em Paris. Ao longo do dia, o plano de oscilação girou no chão. <strong class="text-white">Não foi o pêndulo que girou — foi a Terra girando por baixo dele</strong>.
+          </p>
+          <div class="mt-4 pt-4 border-t border-white/10">
+            <div class="mono text-[10px] tracking-[0.25em] uppercase text-white/40 mb-2">Detalhes técnicos</div>
+            <div class="text-[14px] leading-relaxed text-white/70 space-y-3">
+              <p>O giro obedece à fórmula matemática de uma esfera (15° × seno da latitude). Gira a cada 24h nos polos e não gira no Equador. Nenhum modelo de terra plana explica esse comportamento geográfico.</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2 mt-5 mb-5">
+            <div class="data-stat"><span class="serif text-xl text-white">1851</span><span class="mono text-[9px] uppercase text-white/40 tracking-[0.2em]">Ano do Teste</span></div>
+            <div class="data-stat"><span class="serif text-xl text-white">24h</span><span class="mono text-[9px] uppercase text-white/40 tracking-[0.2em]">Polo: 1 volta em</span></div>
+          </div>
+          <div class="pt-4 border-t border-white/10">
+            <div class="chip text-cyan-300 mb-2"><span class="dot"></span> Como verificar</div>
+            <p class="text-[14px] text-white/70">Visite o Museu do Amanhã (RJ), Catavento (SP) ou o Panteão. Marque a posição e volte uma hora depois. Ele terá girado.</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- Arg 1.4 -->
+      <article class="glass edge-cyan rounded-2xl p-7 pl-9 relative flex flex-col">
+        <div class="ticks"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span></div>
+        <div class="flex items-center justify-between mb-5">
+          <span class="mono text-[10px] tracking-[0.25em] uppercase text-white/40">Argumento 01.4</span>
+          <span class="mono text-[11px] text-cyan-300">↻</span>
+        </div>
+        <h3 class="serif text-3xl leading-tight mb-5">Efeito <span class="ital">Coriolis</span>.</h3>
+        <div class="frame aspect-[4/3] mb-5 shrink-0">
+          <span class="badge">HURRICANE ISABEL</span>
+          <img src="https://s4.static.brasilescola.uol.com.br/vestibular/2025/08/efeito-coriolis.jpg" alt="Furacão">
+        </div>
+        <div class="falacia py-3 mb-4 shrink-0">
+          <div class="text-red-400 chip mb-2"><span class="dot"></span> Mito</div>
+          <p class="serif italic text-white/80 text-lg leading-snug">"Tempestades giram aleatoriamente, não provam formato nenhum."</p>
+        </div>
+        <div class="flex-grow">
+          <div class="text-cyan-300 chip mb-3"><span class="dot"></span> Realidade</div>
+          <p class="text-[14px] leading-relaxed text-white/80">
+            Furacões giram <strong class="text-white">sempre</strong> no sentido anti-horário no Hemisfério Norte e horário no Hemisfério Sul. Esse padrão invertido e consistente chama-se Coriolis, gerado apenas por esferas em rotação.
+          </p>
+          <div class="mt-4 pt-4 border-t border-white/10">
+            <div class="mono text-[10px] tracking-[0.25em] uppercase text-white/40 mb-2">Detalhes técnicos</div>
+            <div class="text-[14px] leading-relaxed text-white/70 space-y-3">
+              <p>Atiradores de longo alcance e pilotos de voos intercontinentais precisam calcular e corrigir suas rotas por conta desse efeito rotacional, caso contrário errariam seus alvos e aeroportos.</p>
+            </div>
+          </div>
+          <div class="pt-4 border-t border-white/10 mt-auto">
+            <div class="chip text-cyan-300 mb-2"><span class="dot"></span> Como verificar</div>
+            <p class="text-[14px] text-white/70">Compare imagens de satélite independentes de tufões no Japão vs. ciclones na Austrália em sites meteorológicos civis.</p>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ==========================================
+       CATEGORIA 02: ÓPTICA
+  =========================================== -->
+  <section>
+    <div class="grid md:grid-cols-12 gap-8 mb-10 items-end">
+      <div class="md:col-span-2"><div class="section-num">02</div></div>
+      <div class="md:col-span-7">
+        <div class="band mb-4 text-pink-300"><span class="dot bg-pink-300"></span><span>Categoria 02</span><span class="line"></span></div>
+        <h2 class="display text-5xl md:text-7xl">Geometria & <span class="ital text-pink-300">óptica</span></h2>
+      </div>
+      <div class="md:col-span-3 text-white/60 text-sm leading-relaxed border-l border-white/10 pl-6">
+        O horizonte não é ilusão: é uma borda mensurável a olho nu, com instrumentos baratos.
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6">
+
+      <!-- Arg 2.1 -->
+      <article class="glass edge-magenta rounded-2xl p-7 pl-9 relative flex flex-col">
+        <div class="ticks"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span></div>
+        <div class="flex items-center justify-between mb-5">
+          <span class="mono text-[10px] tracking-[0.25em] uppercase text-white/40">Argumento 02.1</span>
+          <span class="mono text-[11px] text-pink-300">☼</span>
+        </div>
+        <h3 class="serif text-3xl leading-tight mb-5">Tamanho angular do <span class="ital">pôr do sol</span>.</h3>
+        <div class="frame aspect-[4/3] mb-5 shrink-0">
+          <span class="badge">∡ 0.53° INVARIANTE</span>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/Seascape_after_sunset_denoised.jpg" alt="Pôr do Sol">
+        </div>
+        <div class="falacia py-3 mb-4 shrink-0">
+          <div class="text-red-400 chip mb-2"><span class="dot"></span> Mito</div>
+          <p class="serif italic text-white/80 text-lg leading-snug">"O Sol não se põe — ele só se afasta na perspectiva até sumir."</p>
+        </div>
+        <div class="flex-grow">
+          <div class="text-pink-300 chip mb-3"><span class="dot"></span> Realidade</div>
+          <p class="text-[14px] leading-relaxed text-white/80">
+            Se o Sol se afastasse na horizontal, ele encolheria de tamanho visual (como faróis de carro). Mas, filtrado na câmera, o disco mantém <strong class="text-white">invariáveis 0,53°</strong> até ser devorado pela curva do horizonte.
+          </p>
+          <div class="grid grid-cols-2 gap-2 mt-5 mb-5">
+            <div class="data-stat"><span class="serif text-xl text-white">0,53°</span><span class="mono text-[9px] uppercase text-white/40 tracking-[0.2em]">Tamanho Diário</span></div>
+            <div class="data-stat"><span class="serif text-xl text-white">~0%</span><span class="mono text-[9px] uppercase text-white/40 tracking-[0.2em]">Variação de Tamanho</span></div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Arg 2.2 -->
+      <article class="glass edge-magenta rounded-2xl p-7 pl-9 relative flex flex-col">
+        <div class="ticks"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span></div>
+        <div class="flex items-center justify-between mb-5">
+          <span class="mono text-[10px] tracking-[0.25em] uppercase text-white/40">Argumento 02.2</span>
+          <span class="mono text-[11px] text-pink-300">⌒</span>
+        </div>
+        <h3 class="serif text-3xl leading-tight mb-5">Navios sumindo <span class="ital">de baixo para cima</span>.</h3>
+        <div class="frame aspect-[4/3] mb-5 shrink-0">
+          <span class="badge">HORIZONTE · 25 km</span>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/5/50/Cargo_ship_5.png" alt="Navio">
+        </div>
+        <div class="falacia py-3 mb-4 shrink-0">
+          <div class="text-red-400 chip mb-2"><span class="dot"></span> Mito</div>
+          <p class="serif italic text-white/80 text-lg leading-snug">"Basta usar zoom que o navio reaparece inteiro."</p>
+        </div>
+        <div class="flex-grow">
+          <div class="text-pink-300 chip mb-3"><span class="dot"></span> Realidade</div>
+          <p class="text-[14px] leading-relaxed text-white/80">
+            Quando o barco some, o casco vai primeiro, e o mastro por último. O zoom ótico poderoso aproxima a imagem, mas mostra <strong class="text-white">apenas a metade superior do navio</strong>. A água curva já o escondeu fisicamente.
+          </p>
+          <div class="grid grid-cols-2 gap-2 mt-5 mb-5">
+            <div class="data-stat"><span class="serif text-xl text-white">~6,7 m</span><span class="mono text-[9px] uppercase text-white/40 tracking-[0.2em]">Curvatura a 10 km</span></div>
+            <div class="data-stat"><span class="serif text-xl text-white">~42 m</span><span class="mono text-[9px] uppercase text-white/40 tracking-[0.2em]">Curvatura a 25 km</span></div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Arg 2.3 -->
+      <article class="glass edge-magenta rounded-2xl p-7 pl-9 relative flex flex-col">
+        <div class="ticks"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span></div>
+        <div class="flex items-center justify-between mb-5">
+          <span class="mono text-[10px] tracking-[0.25em] uppercase text-white/40">Argumento 02.3</span>
+          <span class="mono text-[11px] text-pink-300">◐</span>
+        </div>
+        <h3 class="serif text-3xl leading-tight mb-5">O método de <span class="ital">Eratóstenes</span>.</h3>
+        <div class="frame aspect-[4/3] mb-5 shrink-0">
+          <span class="badge">ALEXANDRIA · 240 a.C.</span>
+          <img src="https://scontent.ftow3-2.fna.fbcdn.net/v/t39.30808-6/465018040_9046912268676920_6392598457640589252_n.png?stp=dst-jpg_tt6&_nc_cat=108&ccb=1-7&_nc_sid=0327a3&_nc_eui2=AeHOief94OIQ7Bh5EV9Kd_87Fny9CqQySJwWfL0KpDJInKquW84_6HTdPlwBxdXIb4CdIcX2CoQdRhBz0SAus80D&_nc_ohc=ciXKCNarefsQ7kNvwH-nSb_&_nc_oc=Adpb5vNhWRGRxiYl0JZVnUxhy5_QqtZRicMQUbe-7XVM1kRw7wLAz6PzmgVJawj7VLUjvlQ1LfpOY9eJ7X-2OTJl&_nc_zt=23&_nc_ht=scontent.ftow3-2.fna&_nc_gid=bx7tN6u-g7-tjvqcC7zlKg&_nc_ss=7b2a8&oh=00_Af7jx8lNMaP9puZR1IG6XMjjSIseGc4ORFiEIRnKaiHMug&oe=69FDC158" alt="Eratóstenes">
+        </div>
+        <div class="falacia py-3 mb-4 shrink-0">
+          <div class="text-red-400 chip mb-2"><span class="dot"></span> Mito</div>
+          <p class="serif italic text-white/80 text-lg leading-snug">"Ninguém nunca mediu a Terra de forma independente da NASA."</p>
+        </div>
+        <div class="flex-grow">
+          <div class="text-pink-300 chip mb-3"><span class="dot"></span> Realidade</div>
+          <p class="text-[14px] leading-relaxed text-white/80">
+            Há 2.200 anos, com duas estacas e diferença de ângulo de sombras entre o Egito e Alexandria, o grego Eratóstenes provou a curva e mediu o raio com precisão incrível (erro de apenas 1%).
+          </p>
+          <div class="pt-4 border-t border-white/10 mt-5">
+            <div class="chip text-pink-300 mb-2"><span class="dot"></span> Como verificar</div>
+            <p class="text-[14px] text-white/70">Meça a sombra de uma vara ao meio dia. Peça para um amigo a 500km ao norte fazer o mesmo. A trigonometria do ângulo provará a circunferência esférica.</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- Arg 2.4 -->
+      <article class="glass edge-magenta rounded-2xl p-7 pl-9 relative flex flex-col">
+        <div class="ticks"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span></div>
+        <div class="flex items-center justify-between mb-5">
+          <span class="mono text-[10px] tracking-[0.25em] uppercase text-white/40">Argumento 02.4</span>
+          <span class="mono text-[11px] text-pink-300">◢</span>
+        </div>
+        <h3 class="serif text-3xl leading-tight mb-5">Curvatura visível em <span class="ital">altitude</span>.</h3>
+        <div class="frame aspect-[4/3] mb-5 shrink-0">
+          <span class="badge">VOO COMERCIAL · 12 km</span>
+          <img src="https://i.ytimg.com/vi/MjuH92t_F7A/maxresdefault.jpg" alt="Horizonte em voo">
+        </div>
+        <div class="falacia py-3 mb-4 shrink-0">
+          <div class="text-red-400 chip mb-2"><span class="dot"></span> Mito</div>
+          <p class="serif italic text-white/80 text-lg leading-snug">"A janela do avião tem olho de peixe que distorce tudo."</p>
+        </div>
+        <div class="flex-grow">
+          <div class="text-pink-300 chip mb-3"><span class="dot"></span> Realidade</div>
+          <p class="text-[14px] leading-relaxed text-white/80">
+            A curvatura é sutil, mas observável a olho nu acima dos 10 km de altitude (voos comerciais). Janelas de avião possuem acrílico plano. Projetos escolares de balões a 30km (R$ 2.000 de custo) captam a esfera inegável.
+          </p>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ==========================================
+       CATEGORIA 03: ASTRONOMIA
+  =========================================== -->
+  <section>
+    <div class="grid md:grid-cols-12 gap-8 mb-10 items-end">
+      <div class="md:col-span-2"><div class="section-num">03</div></div>
+      <div class="md:col-span-7">
+        <div class="band mb-4 text-lime-300"><span class="dot bg-lime-300"></span><span>Categoria 03</span><span class="line"></span></div>
+        <h2 class="display text-5xl md:text-7xl">Astronomia <span class="ital text-lime-300">observacional</span></h2>
+      </div>
+      <div class="md:col-span-3 text-white/60 text-sm leading-relaxed border-l border-white/10 pl-6">
+        O céu do equador para baixo destrói qualquer modelo de domo com lógica geométrica primária.
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6">
+
+      <!-- Arg 3.1 -->
+      <article class="glass edge-lime rounded-2xl p-7 pl-9 relative flex flex-col">
+        <div class="ticks"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span></div>
+        <div class="flex items-center justify-between mb-5">
+          <span class="mono text-[10px] tracking-[0.25em] uppercase text-white/40">Argumento 03.1</span>
+          <span class="mono text-[11px] text-lime-300">✦</span>
+        </div>
+        <h3 class="serif text-3xl leading-tight mb-5">Dois <span class="ital">polos celestes</span>.</h3>
+        <div class="frame aspect-[4/3] mb-5 shrink-0">
+          <span class="badge">ESO · LA SILLA</span>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/2/2e/Atacama_star_trails_%28dsc_46831001-cc%29.jpg" alt="Estrelas girando">
+        </div>
+        <div class="falacia py-3 mb-4 shrink-0">
+          <div class="text-red-400 chip mb-2"><span class="dot"></span> Mito</div>
+          <p class="serif italic text-white/80 text-lg leading-snug">"O domo estelar gira inteiro acima do nosso disco plano."</p>
+        </div>
+        <div class="flex-grow">
+          <div class="text-lime-300 chip mb-3"><span class="dot"></span> Realidade</div>
+          <p class="text-[14px] leading-relaxed text-white/80">
+            O norte vê estrelas girando no sentido <strong class="text-white">anti-horário</strong> (via Polaris). O sul vê o sentido <strong class="text-white">horário</strong> (via Sigma Octantis). Dois polos rodando em sentidos opostos é geometrycamente impossível em um teto plano.
+          </p>
+        </div>
+      </article>
+
+      <!-- Arg 3.2 -->
+      <article class="glass edge-lime rounded-2xl p-7 pl-9 relative flex flex-col">
+        <div class="ticks"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span></div>
+        <div class="flex items-center justify-between mb-5">
+          <span class="mono text-[10px] tracking-[0.25em] uppercase text-white/40">Argumento 03.2</span>
+          <span class="mono text-[11px] text-lime-300">☾</span>
+        </div>
+        <h3 class="serif text-3xl leading-tight mb-5">Sombra circular nos <span class="ital">eclipses lunares</span>.</h3>
+        <div class="frame aspect-[4/3] mb-5 shrink-0">
+          <span class="badge">ECLIPSE LUNAR</span>
+          <img src="https://midias.jb.com.br/_midias/jpg/2019/07/23/14259849-429066.jpg" alt="Eclipse Lunar">
+        </div>
+        <div class="falacia py-3 mb-4 shrink-0">
+          <div class="text-red-400 chip mb-2"><span class="dot"></span> Mito</div>
+          <p class="serif italic text-white/80 text-lg leading-snug">"A sombra na Lua é um objeto celestial invisível cruzando a frente."</p>
+        </div>
+        <div class="flex-grow">
+          <div class="text-lime-300 chip mb-3"><span class="dot"></span> Realidade</div>
+          <p class="text-[14px] leading-relaxed text-white/80">
+            Em todos os eclipses, a sombra na Lua é um arco perfeitamente redondo. Aristóteles observou em 350 a.C: <strong class="text-white">o único formato geométrico capaz de projetar uma sombra circular em todas as posições da luz é uma esfera</strong>.
+          </p>
+        </div>
+      </article>
+
+      <!-- Arg 3.3 -->
+      <article class="glass edge-lime rounded-2xl p-7 pl-9 relative flex flex-col">
+        <div class="ticks"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span></div>
+        <div class="flex items-center justify-between mb-5">
+          <span class="mono text-[10px] tracking-[0.25em] uppercase text-white/40">Argumento 03.3</span>
+          <span class="mono text-[11px] text-lime-300">☉</span>
+        </div>
+        <h3 class="serif text-3xl leading-tight mb-5">Sol da meia noite <span class="ital">& polar</span>.</h3>
+        <div class="frame aspect-[4/3] mb-5 shrink-0">
+          <span class="badge">VERÃO ÁRTICO</span>
+          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhfA25qR9_mEZEHyLyqioMMsTqzjt7JFlgbzs17LcfpLI5XXAnP4ebuudxYgrrXx51HGzVIaERsnzXUHCl6ep61l9UDKj5-1UTVLRBUjoFnv3JfPfL1OgliOBIm42UdAiE-TyDkgtdQCg84/s1600/Sol+da+Meia+Noite.gif" alt="Sol da meia noite">
+        </div>
+        <div class="falacia py-3 mb-4 shrink-0">
+          <div class="text-red-400 chip mb-2"><span class="dot"></span> Mito</div>
+          <p class="serif italic text-white/80 text-lg leading-snug">"A Antártida é o anel de gelo ao redor da borda da Terra plana."</p>
+        </div>
+        <div class="flex-grow">
+          <div class="text-lime-300 chip mb-3"><span class="dot"></span> Realidade</div>
+          <p class="text-[14px] leading-relaxed text-white/80">
+            No alto verão do polo sul e norte, o Sol passa <strong class="text-white">meses circulando no céu sem se pôr</strong>. Isso refuta a "borda" antártica — o Sol teria que iluminar um anel de 120 mil quilômetros 24h por dia magicamente.
+          </p>
+          <div class="grid grid-cols-2 gap-2 mt-5 mb-5">
+            <div class="data-stat"><span class="serif text-xl text-white">23,5°</span><span class="mono text-[9px] uppercase text-white/40 tracking-[0.2em]">Inclinação de Eixo</span></div>
+            <div class="data-stat"><span class="serif text-xl text-white">Dezembro</span><span class="mono text-[9px] uppercase text-white/40 tracking-[0.2em]">Sol 24h no Sul</span></div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Arg 3.4 -->
+      <article class="glass edge-lime rounded-2xl p-7 pl-9 relative flex flex-col">
+        <div class="ticks"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span></div>
+        <div class="flex items-center justify-between mb-5">
+          <span class="mono text-[10px] tracking-[0.25em] uppercase text-white/40">Argumento 03.4</span>
+          <span class="mono text-[11px] text-lime-300">◌</span>
+        </div>
+        <h3 class="serif text-3xl leading-tight mb-5">Fusos horários e <span class="ital">simultaneidade</span>.</h3>
+        <div class="frame aspect-[4/3] mb-5 shrink-0">
+          <span class="badge">24 FUSOS</span>
+          <img src="https://network.grupoabril.com.br/wp-content/uploads/sites/4/2016/07/fusohorario.png?quality=70" alt="Fusos Horários">
+        </div>
+        <div class="falacia py-3 mb-4 shrink-0">
+          <div class="text-red-400 chip mb-2"><span class="dot"></span> Mito</div>
+          <p class="serif italic text-white/80 text-lg leading-snug">"Fusos são convenções inventadas. A luz funciona diferente."</p>
+        </div>
+        <div class="flex-grow">
+          <div class="text-lime-300 chip mb-3"><span class="dot"></span> Realidade</div>
+          <p class="text-[14px] leading-relaxed text-white/80">
+            Quando é meio-dia no Brasil, é noite no Japão. 360° da Terra divididos por 24 horas resulta em fatias de 15°. Numa terra plana, faróis altos dariam conta de nos deixar ver o Sol de longe, ou ele não "apagaria" apenas para certos blocos.
+          </p>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ==========================================
+       CATEGORIA 04: ENGENHARIA
+  =========================================== -->
+  <section>
+    <div class="grid md:grid-cols-12 gap-8 mb-10 items-end">
+      <div class="md:col-span-2"><div class="section-num">04</div></div>
+      <div class="md:col-span-7">
+        <div class="band mb-4 text-amber-300"><span class="dot bg-amber-300"></span><span>Categoria 04</span><span class="line"></span></div>
+        <h2 class="display text-5xl md:text-7xl">Exploração & <span class="ital text-amber-300">Engenharia</span></h2>
+      </div>
+      <div class="md:col-span-3 text-white/60 text-sm leading-relaxed border-l border-white/10 pl-6">
+        Missões espaciais civis, GPS funcional e física das reentradas encerram debates.
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6">
+
+      <!-- Arg 4.1 -->
+      <article class="glass edge-amber rounded-2xl p-7 pl-9 relative flex flex-col">
+        <div class="ticks"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span></div>
+        <div class="flex items-center justify-between mb-5">
+          <span class="mono text-[10px] tracking-[0.25em] uppercase text-white/40">Argumento 04.1</span>
+          <span class="mono text-[11px] text-amber-300">⚑</span>
+        </div>
+        <h3 class="serif text-3xl leading-tight mb-5">Apollo: Bandeira, botas & <span class="ital">estrelas</span>.</h3>
+        <div class="frame aspect-[4/3] mb-5 shrink-0">
+          <span class="badge">APOLLO 11 · 1969</span>
+          <img src="https://admin.cnnbrasil.com.br/wp-content/uploads/sites/12/2023/10/apollo_11_flag_on_the_moon_w_aldrin_as11-40-5874.webp?w=985-0" alt="Buzz Aldrin">
+        </div>
+        <div class="falacia py-3 mb-4 shrink-0">
+          <div class="text-red-400 chip mb-2"><span class="dot"></span> Mito</div>
+          <p class="serif italic text-white/80 text-lg leading-snug">"Bandeira ao vento sem ar e fotos sem estrela gritam estúdio."</p>
+        </div>
+        <div class="flex-grow">
+          <div class="text-amber-300 chip mb-3"><span class="dot"></span> Realidade</div>
+          <p class="text-[14px] leading-relaxed text-white/80">
+            A haste da bandeira é moldada em "L" para ficar esticada, e a inércia faz o tecido balançar por falta de atrito com o ar. As estrelas são ofuscadas pela reflexão absurdamente forte do Sol na poeira clara da lua — feche o flash no escuro e comprove as lentes não puxarem as estrelas.
+          </p>
+        </div>
+      </article>
+
+      <!-- Arg 4.2 -->
+      <article class="glass edge-amber rounded-2xl p-7 pl-9 relative flex flex-col">
+        <div class="ticks"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span></div>
+        <div class="flex items-center justify-between mb-5">
+          <span class="mono text-[10px] tracking-[0.25em] uppercase text-white/40">Argumento 04.2</span>
+          <span class="mono text-[11px] text-amber-300">🜂</span>
+        </div>
+        <h3 class="serif text-3xl leading-tight mb-5">Reentrada e <span class="ital">Van Allen</span>.</h3>
+        <div class="frame aspect-[4/3] mb-5 shrink-0">
+          <span class="badge">REENTRADA · 2.800 °C</span>
+          <img src="https://64.media.tumblr.com/e5593052e06ad2754fae513e20ec6150/af848b1035357649-e1/s540x810/926fe7c8fc72d3c17432033b345f4d68937e4974.gifv" alt="Soyuz">
+        </div>
+        <div class="falacia py-3 mb-4 shrink-0">
+          <div class="text-red-400 chip mb-2"><span class="dot"></span> Mito</div>
+          <p class="serif italic text-white/80 text-lg leading-snug">"O metal fundiria, é impossível sobreviver à radiação dos cinturões."</p>
+        </div>
+        <div class="flex-grow">
+          <div class="text-amber-300 chip mb-3"><span class="dot"></span> Realidade</div>
+          <p class="text-[14px] leading-relaxed text-white/80">
+            Escudos ablativos derretem em camadas (sublimam), impedindo que o calor interno de 2.800 °C asse os astronautas. Van Allen foi furado pelas Apollo num caminho rápido: radiação sofrida equipara-se a 2 tomografias de hospital.
+          </p>
+          <div class="grid grid-cols-2 gap-2 mt-5 mb-5">
+            <div class="data-stat"><span class="serif text-xl text-white">2.800 °C</span><span class="mono text-[9px] uppercase text-white/40 tracking-[0.2em]">Escudo</span></div>
+            <div class="data-stat"><span class="serif text-xl text-white">16 mSv</span><span class="mono text-[9px] uppercase text-white/40 tracking-[0.2em]">Radiação</span></div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Arg 4.3 -->
+      <article class="glass edge-amber rounded-2xl p-7 pl-9 relative flex flex-col">
+        <div class="ticks"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span></div>
+        <div class="flex items-center justify-between mb-5">
+          <span class="mono text-[10px] tracking-[0.25em] uppercase text-white/40">Argumento 04.3</span>
+          <span class="mono text-[11px] text-amber-300">◉</span>
+        </div>
+        <h3 class="serif text-3xl leading-tight mb-5">Turismo Espacial <span class="ital">civil</span>.</h3>
+        <div class="frame aspect-[4/3] mb-5 shrink-0">
+          <span class="badge">BLUE MARBLE</span>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/The_Blue_Marble.jpg" alt="Blue Marble">
+        </div>
+        <div class="falacia py-3 mb-4 shrink-0">
+          <div class="text-red-400 chip mb-2"><span class="dot"></span> Mito</div>
+          <p class="serif italic text-white/80 text-lg leading-snug">"Apenas governos mandam imagens CGI feitas na NASA."</p>
+        </div>
+        <div class="flex-grow">
+          <div class="text-amber-300 chip mb-3"><span class="dot"></span> Realidade</div>
+          <p class="text-[14px] leading-relaxed text-white/80">
+            SpaceX (EUA), agências inimigas mortais (EUA, China e Rússia), RocketLab e empresas civis confirmam a mesma topologia. Missões como Inspiration4 enviaram civis a 585 km — mais altos que a ISS — gravando seus próprios vídeos com iPhones para o vazio. O conluio para manter CGI perfeito entre potências e startups adversárias seria impossível de blindar.
+          </p>
+        </div>
+      </article>
+
+      <!-- Arg 4.4 -->
+      <article class="glass edge-amber rounded-2xl p-7 pl-9 relative flex flex-col">
+        <div class="ticks"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span></div>
+        <div class="flex items-center justify-between mb-5">
+          <span class="mono text-[10px] tracking-[0.25em] uppercase text-white/40">Argumento 04.4</span>
+          <span class="mono text-[11px] text-amber-300">✚</span>
+        </div>
+        <h3 class="serif text-3xl leading-tight mb-5">GPS: a esfera <span class="ital">no seu bolso</span>.</h3>
+        <div class="frame aspect-[4/3] mb-5 shrink-0">
+          <span class="badge">NAVSTAR</span>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/e/e2/GPS-constellation-3D-NOAA.jpg" alt="GPS Satellite">
+        </div>
+        <div class="falacia py-3 mb-4 shrink-0">
+          <div class="text-red-400 chip mb-2"><span class="dot"></span> Mito</div>
+          <p class="serif italic text-white/80 text-lg leading-snug">"Sinal de celular faz tudo via torres."</p>
+        </div>
+        <div class="flex-grow">
+          <div class="text-amber-300 chip mb-3"><span class="dot"></span> Realidade</div>
+          <p class="text-[14px] leading-relaxed text-white/80">
+            O GPS de aviação e marítimo depende da triangulação global de 31 satélites num modelo geométrico esférico que ainda inclui distorções relativas de espaço-tempo. Sem a compensação relativista pelas esferas pesadas orbitando o eixo curvo de gravidade, seu Maps erraria a rua em <strong class="text-white">10 km por dia</strong>.
+          </p>
+          <div class="grid grid-cols-2 gap-2 mt-5 mb-5">
+            <div class="data-stat"><span class="serif text-xl text-white">31</span><span class="mono text-[9px] uppercase text-white/40 tracking-[0.2em]">Satélites ativos</span></div>
+            <div class="data-stat"><span class="serif text-xl text-white">10 km/dia</span><span class="mono text-[9px] uppercase text-white/40 tracking-[0.2em]">Erro sem Teoria G.</span></div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ==========================================
+       VEREDICTO FINAL
+  =========================================== -->
+  <section class="relative">
+    <div class="border border-white/10 rounded-3xl p-10 md:p-20 text-center relative overflow-hidden glass">
+      <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full"
+           style="background: radial-gradient(circle, rgba(110,231,255,.15), transparent 60%); filter: blur(20px);"></div>
+      <div class="band justify-center mb-6 text-cyan-300 relative">
+        <span class="dot bg-cyan-300"></span><span>Veredicto Final</span>
+      </div>
+      <h2 class="display text-5xl md:text-8xl relative">
+        A ciência não <br><span class="ital text-cyan-300">pede licença.</span>
+      </h2>
+      <p class="mt-10 max-w-3xl mx-auto text-white/75 text-lg leading-relaxed relative">
+        Cada experimento neste dossiê pode ser <span class="serif ital text-white">replicado por qualquer pessoa</span>. Não exige fé, não exige agência governamental. Eratóstenes, Newton, Foucault e seu próprio GPS provam uma única realidade irrefutável de 6.371 km de raio.
+      </p>
+      <p class="mt-6 max-w-2xl mx-auto text-white/50 text-base leading-relaxed relative">
+        Negar isso em 2026 não é um ato de coragem ou ceticismo iluminado — é simplesmente decidir, de forma cega, ignorar a grandiosidade e a mecânica real do Universo. A esfera é um fato inegociável.
+      </p>
+      <div class="mono text-[10px] tracking-[0.4em] uppercase text-white/40 mt-12 relative">⌬ Dossiê encerrado · END OF FILE ⌬</div>
+    </div>
+  </section>
+
+</main>
+
+<!-- RODAPÉ -->
+<footer class="relative z-10 border-t border-white/10 mt-20">
+  <div class="max-w-[1400px] mx-auto px-6 md:px-10 py-10 flex flex-col md:flex-row items-center justify-between gap-4 mono text-[11px] tracking-[0.2em] uppercase text-white/40">
+    <div>© 2026 — Dossier 02 / Edição Expandida</div>
+    <div>Imagens: NASA · ESO · Wikimedia Commons</div>
+    <div>R = 6 371 km · g = 9,81 m/s²</div>
+  </div>
+</footer>
+
+</body>
+</html>
